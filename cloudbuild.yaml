@@ -1,0 +1,25 @@
+steps:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - artifacts
+  - generic
+  - download
+  - --project=cmoc-prod
+  - --location=us
+  - --repository=codemender-cli-production
+  - --package=cm
+  - --version=stable
+  - --name=cm-linux-amd64.zip
+  - --destination=./
+
+- name: 'ubuntu'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    unzip cm-linux-amd64.zip
+    chmod +x cm
+    cp cm /usr/local/bin/
+    cm init
+    cm find
