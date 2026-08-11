@@ -20,12 +20,9 @@ steps:
   - |
     unzip cm-linux-amd64.zip
     chmod +x cm
-    mv cm /usr/local/bin/
-    export PATH="/usr/local/bin:$PATH"
-    echo $PATH
     ls
-    cm init
-    cm find
+    ./cm init
+    ./cm find
 
 options:
   logging: CLOUD_LOGGING_ONLY
