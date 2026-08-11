@@ -23,3 +23,6 @@ steps:
     cp cm /usr/local/bin/
     cm init
     cm find
+
+options:
+  logging: CLOUD_LOGGING_ONLY
