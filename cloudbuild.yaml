@@ -20,7 +20,10 @@ steps:
   - |
     unzip cm-linux-amd64.zip
     chmod +x cm
-    cp cm /usr/local/bin/
+    mv cm /usr/local/bin/
+    export PATH="/usr/local/bin:$PATH"
+    echo $PATH
+    ls
     cm init
     cm find
 
