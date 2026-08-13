@@ -1,28 +1,45 @@
 steps:
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  args:
-  - gcloud
-  - artifacts
-  - generic
-  - download
-  - --project=cmoc-prod
-  - --location=us
-  - --repository=codemender-cli-production
-  - --package=cm
-  - --version=stable
-  - --name=cm-linux-amd64.zip
-  - --destination=./
-
-- name: 'ubuntu'
-  entrypoint: 'bash'
-  args:
-  - '-c'
-  - |
-    unzip cm-linux-amd64.zip
-    chmod +x cm
-    ls
-    ./cm init
-    ./cm find
-
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    args:
+      - gcloud
+      - artifacts
+      - generic
+      - download
+      - '--project=cmoc-prod'
+      - '--location=us'
+      - '--repository=codemender-cli-production'
+      - '--package=cm'
+      - '--version=stable'
+      - '--name=cm-linux-amd64.zip'
+      - '--destination=./'
+  - name: ubuntu
+    args:
+      - '-c'
+      - |
+        apt-get update
+        apt-get install -y ca-certificates
+        apt-get install -y unzip
+        unzip cm-linux-amd64.zip
+        chmod +x cm
+        ./cm init
+        ./cm find routes/login.ts
+    entrypoint: bash    
+  - name: ubuntu
+    args:
+      - '-c'
+      - |      
+        curl -L \
+        -X POST \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer $$JWT_TOKEN" \
+        -H "X-GitHub-Api-Version: 2026-03-10" \
+        https://api.github.com/repos/ryanmcgrail/juice-shop/pulls \
+        -d '{"title":"Test pull request","body":"Please pull these awesome changes in!","base":"master"}'
+    entrypoint: bash    
 options:
   logging: CLOUD_LOGGING_ONLY
+availableSecrets:
+  secretManager:
+  - versionName: projects/test-project-502314/secrets/codemender-github-app-private-key/versions/1
+    env: 'CODEMENDER_GITHUB_APP_PRIVATE_KEY'
+
