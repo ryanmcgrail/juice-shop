@@ -1,4 +1,5 @@
 steps:
+  # Downloads CodeMender.
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     args:
       - gcloud
@@ -12,6 +13,8 @@ steps:
       - '--version=stable'
       - '--name=cm-linux-amd64.zip'
       - '--destination=./'
+
+  # Finds vulnerabilities via CodeMender.
   - name: ubuntu
     args:
       - '-c'
@@ -23,7 +26,10 @@ steps:
         chmod +x cm
         ./cm init
         ./cm find routes/login.ts
-    entrypoint: bash    
+    entrypoint: bash
+
+  # Generates a JSON Web Token (JWT) by following:
+  # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app#example-using-bash-to-generate-a-jwt
   - name: ubuntu
     args:
       - '-c'
@@ -66,10 +72,15 @@ steps:
 
         # Create JWT
         jwt="${header_payload}"."${signature}" >> jwt.txt
+
+        # Exports JWT to a file so it can be used in the following step.
         echo "${jwt}" > jwt.txt
     entrypoint: bash
     secretEnv:
       - CODEMENDER_GITHUB_APP_PRIVATE_KEY
+
+  # Generates an installation access token for the app by following:
+  # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app
   - name: ubuntu
     args:
       - '-c'
@@ -82,25 +93,33 @@ steps:
 
         jwt=$(cat jwt.txt)
 
+        # Fetches all app installations available to the token.
         installations_response=$(curl -i \
           -H "Authorization: Bearer ${jwt}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/app/installations)
 
+        # Parses the installation id from the API response.
+        # NOTE: This unsafely assumes the first id in the response is the one we want!
         installation_id=$(echo "${installations_response}" | grep -m 1 "\"id\":"
         | sed -nE 's/\s*"id": ([0-9]+),/\1/p')
 
+        # Fetches the installation token for the app in the repo from the API.
         installation_token_response=$(curl --request POST \
           --url "https://api.github.com/app/installations/${installation_id}/access_tokens" \
           --header "Accept: application/vnd.github+json" \
           --header "Authorization: Bearer ${jwt}" \
           --header "X-GitHub-Api-Version: 2026-03-10")
 
+        # Parses the installation token from the API response.
         installation_token=$(echo "${installation_token_response}" | grep
         "\"token\":" | sed -nE 's/\s*"token": "(.*)",/\1/p')
 
+        # Exports the installation token to a file so that we can use it in the following step.
         echo "${installation_token}" > installation_token.jwt
     entrypoint: bash
+
+  # Generates a pull request.
   - name: ubuntu
     args:
       - '-c'
@@ -110,9 +129,6 @@ steps:
         apt-get install -y curl
 
         jwt=$(cat installation_token.jwt) 
-
-        curl -L -X GET H "Accept: application/vnd.github+json" -H
-        "Authorization: Bearer ${jwt}" -H "X-GitHub-Api-Version: 2026-03-10" 
 
         curl -L -X POST -H "Accept: application/vnd.github+json" -H
         "Authorization: Bearer ${jwt}" -H "X-GitHub-Api-Version: 2026-03-10"
