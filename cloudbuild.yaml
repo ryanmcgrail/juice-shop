@@ -27,14 +27,15 @@ steps:
   - name: ubuntu
     args:
       - '-c'
-      - |      
-        client_id='Iv23licJdfOKFpy5vsNt'
+      - |
+        apt-get update
+        apt-get install -y openssl curl
 
+        client_id='Iv23licJdfOKFpy5vsNt'
         pem=$$CODEMENDER_GITHUB_APP_PRIVATE_KEY
-        echo -n "${pem}"
 
         now=$(date +%s)
-        iat=$((${now} - 60)) # Issues 60 seconds in the past
+        iat=$((${now} - 30)) # Issues 30 seconds in the past
         exp=$((${now} + 600)) # Expires 10 minutes in the future
 
         b64enc() { openssl base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n'; }
@@ -43,6 +44,7 @@ steps:
             "typ":"JWT",
             "alg":"RS256"
         }'
+
         # Header encode
         header=$( echo -n "${header_json}" | b64enc )
 
@@ -51,6 +53,7 @@ steps:
             \"exp\":${exp},
             \"iss\":\"${client_id}\"
         }"
+
         # Payload encode
         payload=$( echo -n "${payload_json}" | b64enc )
 
@@ -62,25 +65,65 @@ steps:
         )
 
         # Create JWT
-        "${header_payload}"."${signature}" >> jwt.txt        
-    entrypoint: bash  
-    secrets: ['CODEMENDER_GITHUB_APP_PRIVATE_KEY']  
+        jwt="${header_payload}"."${signature}" >> jwt.txt
+        echo "${jwt}" > jwt.txt
+    entrypoint: bash
+    secretEnv:
+      - CODEMENDER_GITHUB_APP_PRIVATE_KEY
   - name: ubuntu
     args:
       - '-c'
-      - |      
-        curl -L \
-        -X POST \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer $( cat jwt.txt )" \
-        -H "X-GitHub-Api-Version: 2026-03-10" \
-        https://api.github.com/repos/ryanmcgrail/juice-shop/pulls \
-        -d '{"title":"Test pull request","body":"Please pull these awesome changes in!","base":"master"}'
+      - >
+        apt-get update
+
+        apt-get install -y curl
+
+        echo "curling for installations"
+
+        jwt=$(cat jwt.txt)
+
+        installations_response=$(curl -i \
+          -H "Authorization: Bearer ${jwt}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/app/installations)
+
+        installation_id=$(echo "${installations_response}" | grep -m 1 "\"id\":"
+        | sed -nE 's/\s*"id": ([0-9]+),/\1/p')
+
+        installation_token_response=$(curl --request POST \
+          --url "https://api.github.com/app/installations/${installation_id}/access_tokens" \
+          --header "Accept: application/vnd.github+json" \
+          --header "Authorization: Bearer ${jwt}" \
+          --header "X-GitHub-Api-Version: 2026-03-10")
+
+        installation_token=$(echo "${installation_token_response}" | grep
+        "\"token\":" | sed -nE 's/\s*"token": "(.*)",/\1/p')
+
+        echo "${installation_token}" > installation_token.jwt
+    entrypoint: bash
+  - name: ubuntu
+    args:
+      - '-c'
+      - >
+        apt-get update
+
+        apt-get install -y curl
+
+        jwt=$(cat installation_token.jwt) 
+
+        curl -L -X GET H "Accept: application/vnd.github+json" -H
+        "Authorization: Bearer ${jwt}" -H "X-GitHub-Api-Version: 2026-03-10" 
+
+        curl -L -X POST -H "Accept: application/vnd.github+json" -H
+        "Authorization: Bearer ${jwt}" -H "X-GitHub-Api-Version: 2026-03-10"
+        https://api.github.com/repos/ryanmcgrail/juice-shop/pulls  -d
+        '{"title":"Test pull request","body":"Please pull these awesome  changes
+        in!","base":"master"}'
     entrypoint: bash
 options:
   logging: CLOUD_LOGGING_ONLY
 availableSecrets:
   secretManager:
-  - versionName: projects/test-project-502314/secrets/codemender-github-app-private-key/versions/1
-    env: 'CODEMENDER_GITHUB_APP_PRIVATE_KEY'
-
+    - versionName: >-
+        projects/test-project-502314/secrets/codemender-github-app-private-key/versions/1
+      env: CODEMENDER_GITHUB_APP_PRIVATE_KEY
