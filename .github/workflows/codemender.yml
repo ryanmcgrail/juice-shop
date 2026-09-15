@@ -1,0 +1,108 @@
+name: CodeMender Security Remediation
+
+on:
+  # ---------------------------------------------------------------------------
+  # 1. Scheduled Recurring Audit (Full Repository Sweeps)
+  # ---------------------------------------------------------------------------
+  schedule:
+    # Runs weekly on Sunday at 2:00 AM UTC.
+    # Cron format: minute (0-59) hour (0-23) day-of-month (1-31) month (1-12) day-of-week (0-6, 0=Sunday)
+    # Examples:
+    #   - '0 2 * * 0'  -> Weekly on Sunday at 02:00 UTC
+    #   - '0 2 * * *'  -> Nightly every day at 02:00 UTC
+    - cron: '0 2 1 * *' # Runs at 02:00, on day 1 of the month
+
+  # ---------------------------------------------------------------------------
+  # 2. Pull Request Scanning ("Clean as You Code")
+  # ---------------------------------------------------------------------------
+  pull_request:
+    # Trigger on-demand when 'codemender-scan' label is added to a PR.
+    # (To configure scans on push, scan-every-PR, or path filters, see Section 8).
+    types: [labeled]
+
+    # Target base branches to guard (e.g. main, master, release/*)
+    branches: [main, master]
+
+  # ---------------------------------------------------------------------------
+  # 3. Manual On-Demand Trigger (GitHub UI / gh CLI)
+  # ---------------------------------------------------------------------------
+  workflow_dispatch:
+    inputs:
+      scan_target:
+        description: 'Subdirectory path to scan'
+        required: false
+        default: '.'
+      max_tasks:
+        description: 'Maximum parallel worker tasks'
+        required: false
+        default: '10'
+      build_command:
+        description: 'Custom build & test command for verification'
+        required: false
+        default: 'npm install --prefer-offline && npm test'
+        type: string
+      skip_exploit_verification:
+        description: 'Skip dynamic exploit verification (cm verify --skip-exploit-verification)'
+        required: false
+        default: true
+        type: boolean
+      fix_model:
+        description: 'Dedicated model override for Stage 2 patch synthesis (cm fix)'
+        required: false
+        default: 'gemini-3.6-flash'
+        type: string
+
+# -----------------------------------------------------------------------------
+# GitHub Actions Permissions (Required by CodeMender Multi-Stage Pipeline)
+# -----------------------------------------------------------------------------
+permissions:
+  id-token: write         # Required: GCP Workload Identity Federation (WIF) OIDC authentication
+  contents: write         # Required: Pushing automated 'codemender/fix-...' git branches
+  pull-requests: write    # Required: Opening Child Pull Requests or posting review comments
+  security-events: write  # Required: Uploading SARIF reports to GitHub Code Scanning (Security Tab)
+  actions: read           # Required: Passing intermediate state artifacts between runner jobs
+  packages: read          # Required: Pulling runner container image from GitHub Container Registry (GHCR)
+
+jobs:
+  remediate:
+    # Execution Guard: Run on Schedule, Manual Dispatch, or PRs with 'codemender-scan' label
+    if: >
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'codemender-scan'))
+    # Call the reusable CodeMender orchestration workflow
+    # uses: ilbzzz/codemender-agent/.github/workflows/codemender_parallel.yml@main
+    uses: ./.github/workflows/codemender_parallel.yml
+
+    with:
+      # Point to your personal or public runner image on GHCR:
+      runner_image: 'ghcr.io/ilbzzz/codemender-runner:latest'
+
+      scan_target: ${{ inputs.scan_target || '.' }}
+
+      # Optional: Skip dynamic exploit verification during Stage 2 (cm verify --skip-exploit-verification).
+      # Fallback Default (false): Generates & verifies PoC exploits dynamically before synthesis.
+      skip_exploit_verification: ${{ inputs.skip_exploit_verification || true }}
+
+      max_tasks: ${{ github.event_name == 'pull_request' && 4 || 10 }}
+      # --- Build & Test Verification (CRITICAL) ---
+      # Command executed by 'cm fix' to ensure generated patches build and pass unit tests.
+      # Leave empty ('') to auto-detect based on package.json, pom.xml, requirements.txt, etc.
+      # Examples:
+      #   - Node.js / TypeScript: 'npm test' or 'npm run test:ci' or 'yarn test'
+      #   - Python:               'pytest' or 'python -m unittest discover tests'
+      #   - Java / Maven:         'mvn clean test'
+      #   - Java / Gradle:        './gradlew test'
+      #   - Go:                   'go test ./...'
+      #   - Rust:                 'cargo test'
+      build_command: ${{ inputs.build_command || 'npm install --prefer-offline && npm test' }}
+      fix_model: ${{ inputs.fix_model || 'gemini-3.6-flash' }}       # Dedicated model for Stage 2 patch synthesis (cm fix, e.g. 'gemini-2.5-flash')
+
+    secrets:
+      # --- Google Cloud Platform Authentication (Keyless Workload Identity Federation) ---
+      gcp_workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      gcp_service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      # --- GitHub Authentication (GitHub App Bot) ---
+      github_app_id: ${{ secrets.GH_APP_ID }}
+      github_app_private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
