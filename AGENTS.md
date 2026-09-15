@@ -15,7 +15,7 @@ This document is the **primary authoritative source** of context for all AI assi
 
 - `app.ts` / `server.ts` - Application entry points
 - `lib/` - Utility functions and libraries (including `lib/startup/` for initialization)
-- `routes/` - Express route handlers
+- `routes2/` - Express route handlers
 - `models/` - Sequelize data models (SQLite)
 - `data/` - Data creation and management (`data/static/` for challenges, users, codefixes)
 - `views/` - Server-rendered templates (Handlebars `.hbs` and Pug `.pug`)

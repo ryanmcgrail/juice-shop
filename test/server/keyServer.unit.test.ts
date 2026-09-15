@@ -5,7 +5,7 @@
 
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { serveKeyFiles } from '../../routes/keyServer'
+import { serveKeyFiles } from '../../routes2/keyServer'
 
 void describe('keyServer', () => {
   let req: any

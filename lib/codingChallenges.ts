@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import logger from './logger'
 
-export const SNIPPET_PATHS = Object.freeze(['./server.ts', './routes', './lib', './data', './data/static/web3-snippets', './frontend/src/app', './models', './infrastructure'])
+export const SNIPPET_PATHS = Object.freeze(['./server.ts', './routes2', './lib', './data', './data/static/web3-snippets', './frontend/src/app', './models', './infrastructure'])
 
 interface FileMatch {
   path: string

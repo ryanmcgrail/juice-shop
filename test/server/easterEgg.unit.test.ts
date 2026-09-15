@@ -7,7 +7,7 @@ import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { challenges } from '../../data/datacache'
 import { type Challenge } from '@juice-shop/data/types'
-import { serveEasterEgg } from '../../routes/easterEgg'
+import { serveEasterEgg } from '../../routes2/easterEgg'
 
 void describe('easterEgg', () => {
   let req: any

@@ -6,7 +6,7 @@
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import config, { type IConfig } from 'config'
-import { countryMapping } from '../../routes/countryMapping'
+import { countryMapping } from '../../routes2/countryMapping'
 
 void describe('countryMapping', () => {
   let req: any

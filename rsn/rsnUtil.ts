@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import { diffLines, structuredPatch } from 'diff'
 import yaml from 'js-yaml'
 
-import { retrieveCodeSnippet } from '../routes/vulnCodeSnippet'
+import { retrieveCodeSnippet } from '../routes2/vulnCodeSnippet'
 
 const fixesPath = 'data/static/codefixes'
 const cacheFile = 'rsn/cache.json'

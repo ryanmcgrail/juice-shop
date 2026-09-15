@@ -5,7 +5,7 @@
 
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { dataExport } from '../../routes/dataExport'
+import { dataExport } from '../../routes2/dataExport'
 import * as security from '../../lib/insecurity'
 import { MemoryModel } from '../../models/memory'
 import * as db from '../../data/mongodb'

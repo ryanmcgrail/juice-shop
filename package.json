@@ -54,9 +54,9 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "postinstall": "cd frontend && npm install && cd .. && npm run build:frontend && (npm run --silent build:server || cd .)",
-    "lint": "eslint *.ts data lib models routes test/**/*.ts views && npm run lint:config && cd frontend && npm run lint && npm run lint:scss && cd ..",
+    "lint": "eslint *.ts data lib models routes2 test/**/*.ts views && npm run lint:config && cd frontend && npm run lint && npm run lint:scss && cd ..",
     "lint:config": "tsx lib/scripts/lintConfig.ts",
-    "lint:fix": "eslint *.ts data lib models routes test/**/*.ts views rsn --fix && cd frontend && npm run lint:fix && cd ..",
+    "lint:fix": "eslint *.ts data lib models routes2 test/**/*.ts views rsn --fix && cd frontend && npm run lint:fix && cd ..",
     "package": "node scripts/package.mjs",
     "package:ci": "npm prune --production && npm dedupe && cd frontend && npm prune --production && cd .. && npm run --silent sbom && node scripts/package.mjs",
     "serve": "concurrently --kill-others \"tsx app.ts\" \"cd frontend && npm run start\"",
@@ -82,7 +82,7 @@
     "include": [
       "lib/*.ts",
       "models/*.ts",
-      "routes/*.ts",
+      "routes2/*.ts",
       "server.ts"
     ],
     "reporter": [

@@ -5,7 +5,7 @@
 
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { saveLoginIp } from '../../routes/saveLoginIp'
+import { saveLoginIp } from '../../routes2/saveLoginIp'
 import { UserModel } from '../../models/user'
 import * as security from '../../lib/insecurity'
 

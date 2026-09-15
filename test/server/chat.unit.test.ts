@@ -5,7 +5,7 @@
 
 import { describe, it, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import * as chat from '../../routes/chat'
+import * as chat from '../../routes2/chat'
 import { UserModel } from '../../models/user'
 import * as security from '../../lib/insecurity'
 

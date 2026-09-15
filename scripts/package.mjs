@@ -87,7 +87,7 @@ const files = await glob([
   'lib/**',
   'models/*.ts',
   'node_modules/**',
-  'routes/*.ts',
+  'routes2/*.ts',
   'uploads/complaints/.gitkeep',
   'views/**'
 ], { dot: true, ignore: ['build/reports/**'], nodir: true })

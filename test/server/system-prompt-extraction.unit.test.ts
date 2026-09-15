@@ -5,8 +5,8 @@
 
 import { after, before, describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { checkSystemPromptSimilarity } from '../../routes/verify'
-import { buildSystemPrompt } from '../../routes/chat'
+import { checkSystemPromptSimilarity } from '../../routes2/verify'
+import { buildSystemPrompt } from '../../routes2/chat'
 import { diceCoefficient } from '../../lib/utils'
 
 const reference = buildSystemPrompt()

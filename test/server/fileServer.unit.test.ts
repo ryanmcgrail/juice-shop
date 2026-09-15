@@ -6,7 +6,7 @@
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { challenges } from '../../data/datacache'
-import { servePublicFiles } from '../../routes/fileServer'
+import { servePublicFiles } from '../../routes2/fileServer'
 import { type Challenge } from '@juice-shop/data/types'
 
 void describe('fileServer', () => {

@@ -5,7 +5,7 @@
 
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { serveAngularClient } from '../../routes/angular'
+import { serveAngularClient } from '../../routes2/angular'
 
 void describe('angular', () => {
   let req: any
