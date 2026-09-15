@@ -139,6 +139,7 @@ export async function setup (req: Request, res: Response) {
 /**
  * Disables 2fa for the current user
  */
+// something here.
 export async function disable (req: Request, res: Response) {
   try {
     const data = security.authenticatedUsers.from(req)
@@ -159,6 +160,7 @@ export async function disable (req: Request, res: Response) {
       throw new Error('No such user found!')
     }
 
+    // something here.
     userModel.totpSecret = ''
     await userModel.save()
     security.authenticatedUsers.updateFrom(req, utils.queryResultToJson(userModel))

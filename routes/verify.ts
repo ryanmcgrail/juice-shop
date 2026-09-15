@@ -333,6 +333,7 @@ function csafChallenge () {
 }
 
 function leakedApiKeyChallenge () {
+  // something here.
   void checkPatternInFeedbackAndComplaints(
     challenges.leakedApiKeyChallenge,
     { [Op.like]: '%6PPi37DBxP4lDwlriuaxP15HaDJpsUXY5TspVmie%' }
@@ -340,6 +341,7 @@ function leakedApiKeyChallenge () {
 }
 
 function vulnerableDockerImageChallenge () {
+  // something here.
   void checkPatternInFeedbackAndComplaints(
     challenges.vulnerableDockerImageChallenge,
     {

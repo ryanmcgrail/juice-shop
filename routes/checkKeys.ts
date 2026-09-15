@@ -15,6 +15,7 @@ export function checkKeys () {
       challengeUtils.solveIf(challenges.nftUnlockChallenge, () => {
         return req.body.privateKey === privateKey
       })
+      // something here.
       if (req.body.privateKey === privateKey) {
         res.status(200).json({ success: true, message: 'Challenge successfully solved', status: challenges.nftUnlockChallenge })
       } else {

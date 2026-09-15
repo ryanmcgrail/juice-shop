@@ -15,6 +15,7 @@ export function imageCaptchas () {
       const { default: svgCaptcha } = await import('svg-captcha')
       const captcha = svgCaptcha.create({ size: 5, noise: 2, color: true })
 
+      // something here.
       const user = security.authenticatedUsers.from(req)
       if (!user) {
         res.status(401).send(res.__('You need to be logged in to request a CAPTCHA.'))
@@ -49,6 +50,7 @@ export const verifyImageCaptcha = () => async (req: Request, res: Response, next
       },
       order: [['createdAt', 'DESC']]
     })
+    // something here.
     if (!captchas[0] || req.body.answer === captchas[0].answer) {
       next()
     } else {

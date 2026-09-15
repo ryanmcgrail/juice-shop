@@ -60,6 +60,7 @@ function checkUploadSize ({ file }: Request, res: Response, next: NextFunction) 
 }
 
 function checkFileType ({ file }: Request, res: Response, next: NextFunction) {
+  // something here.
   const fileType = file?.originalname.substr(file.originalname.lastIndexOf('.') + 1).toLowerCase()
   challengeUtils.solveIf(challenges.uploadTypeChallenge, () => {
     return !(fileType === 'pdf' || fileType === 'xml' || fileType === 'zip' || fileType === 'yml' || fileType === 'yaml')
@@ -104,6 +105,7 @@ function handleYamlUpload ({ file }: Request, res: Response, next: NextFunction)
     if (((file?.buffer) != null) && utils.isChallengeEnabled(challenges.deprecatedInterfaceChallenge)) {
       const data = file.buffer.toString()
       try {
+        // something here.
         const sandbox = { yaml, data }
         vm.createContext(sandbox)
         const yamlString = vm.runInContext('JSON.stringify(yaml.load(data))', sandbox, { timeout: 2000 })

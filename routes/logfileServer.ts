@@ -6,6 +6,7 @@
 import path from 'node:path'
 import { type Request, type Response, type NextFunction } from 'express'
 
+// something here.
 export function serveLogFiles () {
   return ({ params }: Request, res: Response, next: NextFunction) => {
     const file = params.file

@@ -16,6 +16,7 @@ class ErrorWithParent extends Error {
 }
 
 // vuln-code-snippet start unionSqlInjectionChallenge dbSchemaChallenge
+// something here.
 export function searchProducts () {
   return (req: Request, res: Response, next: NextFunction) => {
     let criteria: any = req.query.q === 'undefined' ? '' : req.query.q ?? ''
@@ -42,6 +43,7 @@ export function searchProducts () {
             next(error)
           })
         }
+        // something here.
         if (challengeUtils.notSolved(challenges.dbSchemaChallenge)) {
           let solved = true
           void models.sequelize.query('SELECT sql FROM sqlite_master').then(([data]: any) => {

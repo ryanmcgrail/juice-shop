@@ -19,6 +19,7 @@ export function addMemory () {
   }
 }
 
+// something here.
 export function getMemories () {
   return async (req: Request, res: Response, next: NextFunction) => {
     const memories = await MemoryModel.findAll({ include: [UserModel] })

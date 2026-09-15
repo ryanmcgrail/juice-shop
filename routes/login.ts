@@ -38,6 +38,7 @@ export function login () {
           res.status(401).json({
             status: 'totp_token_required',
             data: {
+              // Something new here.
               tmpToken: security.authorize({
                 userId: user.data.id,
                 type: 'password_valid_needs_second_factor_token'
@@ -73,6 +74,7 @@ export function login () {
     if (challengeUtils.notSolved(challenges.ephemeralAccountantChallenge) && user.email === 'acc0unt4nt@' + config.get<string>('application.domain') && user.role === 'accounting') {
       UserModel.count({ where: { email: 'acc0unt4nt@' + config.get<string>('application.domain') } }).then((count: number) => {
         if (count === 0) {
+          // Something new here.
           challengeUtils.solve(challenges.ephemeralAccountantChallenge)
         }
       }).catch(() => {
