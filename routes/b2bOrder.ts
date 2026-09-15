@@ -13,11 +13,60 @@ import { challenges } from '../data/datacache'
 import * as security from '../lib/insecurity'
 import * as utils from '../lib/utils'
 
+function isSafeOrderLinesData (input: string): boolean {
+  let decoded = input
+  let prev = ''
+  while (prev !== decoded) {
+    prev = decoded
+    decoded = decoded
+      .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/\\u\{([0-9a-fA-F]+)\}/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+      .replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+  }
+
+  const lower = decoded.toLowerCase()
+
+  const dangerousPatterns = [
+    'process',
+    'constructor',
+    'function',
+    'global',
+    'globalthis',
+    'require',
+    'import',
+    'eval',
+    'proto',
+    'prototype',
+    'mainmodule',
+    'builtinmodule',
+    'child_process',
+    'exec',
+    'spawn',
+    'reflect',
+    'proxy',
+    'fromcharcode',
+    'fromcodepoint',
+    'codepointat',
+    'charcodeat'
+  ]
+
+  for (const pattern of dangerousPatterns) {
+    if (lower.includes(pattern)) {
+      return false
+    }
+  }
+
+  return true
+}
+
 export function b2bOrder () {
   return ({ body }: Request, res: Response, next: NextFunction) => {
     if (utils.isChallengeEnabled(challenges.rceChallenge) || utils.isChallengeEnabled(challenges.rceOccupyChallenge)) {
       const orderLinesData = body.orderLinesData || ''
       try {
+        if (!isSafeOrderLinesData(orderLinesData)) {
+          throw new Error('Unsafe code execution blocked')
+        }
         const sandbox = { safeEval, orderLinesData }
         vm.createContext(sandbox)
         vm.runInContext('safeEval(orderLinesData)', sandbox, { timeout: 2000 })
