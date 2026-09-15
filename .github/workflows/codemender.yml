@@ -76,7 +76,7 @@ jobs:
 
     with:
       # Point to your personal or public runner image on GHCR:
-      runner_image: 'ghcr.io/ilbzzz/codemender-runner:latest'
+      runner_image: 'ghcr.io/ryanmcgrail/codemender-runner:latest'
 
       scan_target: ${{ inputs.scan_target || '.' }}
 
