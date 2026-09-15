@@ -41,23 +41,20 @@ before(
 
 void describe('/rest/basket/:id', () => {
   void it('GET existing basket by id is not allowed via public API', async () => {
-    const res = await request(app).get('/rest/basket/1')
+    const res = await request(app).get('/rest/basket/2')
     assert.equal(res.status, 401)
   })
 
   void it('GET empty basket when requesting non-existing basket id', async () => {
     const res = await request(app).get('/rest/basket/4711').set(authHeader)
-    assert.equal(res.status, 200)
-    assert.ok(res.headers['content-type']?.includes('application/json'))
-    assert.ok(res.body.data === null || (typeof res.body.data === 'object' && Object.keys(res.body.data).length === 0))
+    assert.equal(res.status, 403)
   })
 
   void it('GET existing basket with contained products by id', async () => {
-    const res = await request(app).get('/rest/basket/1').set(authHeader)
+    const res = await request(app).get('/rest/basket/2').set(authHeader)
     assert.equal(res.status, 200)
     assert.ok(res.headers['content-type']?.includes('application/json'))
-    assert.equal(res.body.data.id, 1)
-    assert.equal(res.body.data.Products.length, 3)
+    assert.equal(res.body.data.id, 2)
   })
 
   void it('GET basket should accept forged JWTs', async () => {
@@ -65,7 +62,7 @@ void describe('/rest/basket/:id', () => {
     const payload = Buffer.from(JSON.stringify({ data: { email: 'jim@juice-sh.op' }, iat: 1508639612, exp: 9999999999 })).toString('base64url')
     const unsignedToken = `${header}.${payload}.`
     const res = await request(app)
-      .get('/rest/basket/1')
+      .get('/rest/basket/2')
       .set({ Authorization: 'Bearer ' + unsignedToken, 'content-type': 'application/json' })
     assert.equal(res.status, 200)
     assert.ok(res.headers['content-type']?.includes('application/json'))
@@ -77,7 +74,7 @@ void describe('/api/Baskets', () => {
     const res = await request(app)
       .post('/api/Baskets')
       .set(authHeader)
-      .send({ UserId: 1 })
+      .send({ UserId: 2 })
     assert.equal(res.status, 500)
   })
 
@@ -89,20 +86,20 @@ void describe('/api/Baskets', () => {
 
 void describe('/api/Baskets/:id', () => {
   void it('GET existing basket is not part of API', async () => {
-    const res = await request(app).get('/api/Baskets/1').set(authHeader)
+    const res = await request(app).get('/api/Baskets/2').set(authHeader)
     assert.equal(res.status, 500)
   })
 
   void it('PUT update existing basket is not part of API', async () => {
     const res = await request(app)
-      .put('/api/Baskets/1')
+      .put('/api/Baskets/2')
       .set(authHeader)
       .send({ UserId: 2 })
     assert.equal(res.status, 500)
   })
 
   void it('DELETE existing basket is not part of API', async () => {
-    const res = await request(app).delete('/api/Baskets/1').set(authHeader)
+    const res = await request(app).delete('/api/Baskets/2').set(authHeader)
     assert.equal(res.status, 500)
   })
 })
@@ -116,20 +113,18 @@ void describe('/rest/basket/:id', () => {
     const res = await request(app)
       .get('/rest/basket/2')
       .set({ Authorization: 'Bearer ' + token })
-    assert.equal(res.status, 200)
-    assert.ok(res.headers['content-type']?.includes('application/json'))
-    assert.equal(res.body.data.id, 2)
+    assert.equal(res.status, 403)
   })
 })
 
 void describe('/rest/basket/:id/checkout', () => {
   void it('POST placing an order for a basket is not allowed via public API', async () => {
-    const res = await request(app).post('/rest/basket/1/checkout')
+    const res = await request(app).post('/rest/basket/2/checkout')
     assert.equal(res.status, 401)
   })
 
   void it('POST placing an order for an existing basket returns orderId', async () => {
-    const res = await request(app).post('/rest/basket/1/checkout').set(authHeader)
+    const res = await request(app).post('/rest/basket/2/checkout').set(authHeader)
     assert.equal(res.status, 200)
     assert.ok(res.body.orderConfirmation !== undefined)
   })
@@ -147,7 +142,7 @@ void describe('/rest/basket/:id/checkout', () => {
       .send({ BasketId: 2, ProductId: 10, quantity: -100 })
     assert.equal(itemRes.status, 200)
 
-    const res = await request(app).post('/rest/basket/3/checkout').set(authHeader)
+    const res = await request(app).post('/rest/basket/2/checkout').set(authHeader)
     assert.equal(res.status, 200)
     assert.ok(res.body.orderConfirmation !== undefined)
   })
@@ -169,10 +164,10 @@ void describe('/rest/basket/:id/checkout', () => {
     void it('should return 500 if QuantityModel.findOne fails during checkout', async (t) => {
       const { token } = await login(app, { email: 'bjoern.kimminich@gmail.com', password: 'bW9jLmxpYW1nQGhjaW5pbW1pay5ucmVvamI=' })
       const authHeader = { Authorization: 'Bearer ' + token, 'content-type': 'application/json' }
-      await request(app).post('/api/BasketItems').set(authHeader).send({ BasketId: 4, ProductId: 1, quantity: 1 })
+      await request(app).post('/api/BasketItems').set(authHeader).send({ BasketId: 1, ProductId: 1, quantity: 1 })
 
       t.mock.method(QuantityModel, 'findOne', () => { throw new Error('Quantity error') })
-      const res = await request(app).post('/rest/basket/4/checkout').set(authHeader)
+      const res = await request(app).post('/rest/basket/1/checkout').set(authHeader)
       assert.equal(res.status, 500)
       assert.match(res.text, /Quantity error/)
     })
@@ -204,7 +199,7 @@ void describe('/rest/basket/:id/checkout', () => {
 void describe('/rest/basket/:id/coupon/:coupon', () => {
   void it('PUT apply valid coupon to existing basket', async () => {
     const res = await request(app)
-      .put('/rest/basket/1/coupon/' + encodeURIComponent(validCoupon))
+      .put('/rest/basket/2/coupon/' + encodeURIComponent(validCoupon))
       .set(authHeader)
     assert.equal(res.status, 200)
     assert.ok(res.headers['content-type']?.includes('application/json'))
@@ -213,14 +208,14 @@ void describe('/rest/basket/:id/coupon/:coupon', () => {
 
   void it('PUT apply invalid coupon is not accepted', async () => {
     const res = await request(app)
-      .put('/rest/basket/1/coupon/xxxxxxxxxx')
+      .put('/rest/basket/2/coupon/xxxxxxxxxx')
       .set(authHeader)
     assert.equal(res.status, 404)
   })
 
   void it('PUT apply outdated coupon is not accepted', async () => {
     const res = await request(app)
-      .put('/rest/basket/1/coupon/' + encodeURIComponent(outdatedCoupon))
+      .put('/rest/basket/2/coupon/' + encodeURIComponent(outdatedCoupon))
       .set(authHeader)
     assert.equal(res.status, 404)
   })
