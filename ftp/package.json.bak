@@ -157,7 +157,7 @@
   "nyc": {
     "include": [
       "lib/*.js",
-      "routes2/*.js"
+      "routes/*.js"
     ],
     "all": true,
     "reporter": [

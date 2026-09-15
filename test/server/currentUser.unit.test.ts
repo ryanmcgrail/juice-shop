@@ -5,7 +5,7 @@
 
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { retrieveLoggedInUser } from '../../routes2/currentUser'
+import { retrieveLoggedInUser } from '../../routes/currentUser'
 import { authenticatedUsers } from '../../lib/insecurity'
 import type { UserModel } from '@juice-shop/models/user'
 

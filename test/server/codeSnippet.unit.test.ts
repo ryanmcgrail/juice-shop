@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { getVerdict } from '../../routes2/vulnCodeSnippet'
+import { getVerdict } from '../../routes/vulnCodeSnippet'
 
 void describe('vulnCodeSnippet', () => {
   void it('should assert single correctly selected vuln line as correct', () => {

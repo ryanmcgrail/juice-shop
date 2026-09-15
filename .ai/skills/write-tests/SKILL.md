@@ -27,7 +27,7 @@ It is based on the project's four test suites and the companion guide's [Testing
 | **E2E** | `test/cypress/e2e/*.spec.ts` | Cypress | `npm start & npm run test:e2e` | (not part of lcov coverage) | — |
 
 `npm test` runs frontend + server + api. `npm run test:coverage` runs all three coverage variants.
-The `nyc` config in `package.json` measures coverage for `lib/*.ts`, `models/*.ts`, `routes2/*.ts`, and `server.ts` (server + api suites); the frontend suite measures the Angular sources (excluding `src/hacking-instructor/**`).
+The `nyc` config in `package.json` measures coverage for `lib/*.ts`, `models/*.ts`, `routes/*.ts`, and `server.ts` (server + api suites); the frontend suite measures the Angular sources (excluding `src/hacking-instructor/**`).
 
 For **detailed, copy-ready patterns and real example files per suite, read the matching reference before writing:**
 
@@ -75,7 +75,7 @@ Compute per-file line coverage as `LH / LF` and branch coverage as `BRH / BRF`. 
 Prefer gaps in this order (best first):
 1. **Pure functions / helpers** in `lib/*.ts` with uncovered lines — trivial to unit-test in isolation → **server unit test**.
 2. **Uncovered error/negative branches** (e.g. `catch` blocks, `if (!x) next(error)`, `400/401/500` responses) — a single extra case usually closes several branches.
-3. **Route handlers** in `routes2/*.ts` — test the HTTP contract → **API test** (or a server unit test if the handler is easily invoked with mock `req/res`, see `keyServer.unit.test.ts`).
+3. **Route handlers** in `routes/*.ts` — test the HTTP contract → **API test** (or a server unit test if the handler is easily invoked with mock `req/res`, see `keyServer.unit.test.ts`).
 4. **Angular services** (`frontend/src/app/Services/*.ts`) — easiest frontend wins via `HttpTestingController`.
 5. **Angular components** — cover `ngOnInit`, output events, and error handling.
 

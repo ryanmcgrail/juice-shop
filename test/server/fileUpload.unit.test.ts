@@ -7,7 +7,7 @@ import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { challenges } from '../../data/datacache'
 import { type Challenge } from '@juice-shop/data/types'
-import { checkUploadSize, checkFileType } from '../../routes2/fileUpload'
+import { checkUploadSize, checkFileType } from '../../routes/fileUpload'
 
 void describe('fileUpload', () => {
   let req: any

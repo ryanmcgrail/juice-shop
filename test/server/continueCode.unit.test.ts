@@ -7,7 +7,7 @@ import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { challenges } from '../../data/datacache'
 import { type Challenge } from '@juice-shop/data/types'
-import { continueCode } from '../../routes2/continueCode'
+import { continueCode } from '../../routes/continueCode'
 
 void describe('continueCode', () => {
   let req: any

@@ -8,7 +8,7 @@ import assert from 'node:assert/strict'
 import config from 'config'
 
 import { version } from '../../package.json'
-import { retrieveAppVersion } from '../../routes2/appVersion'
+import { retrieveAppVersion } from '../../routes/appVersion'
 
 void describe('appVersion', () => {
   void it('should ' + config.get<boolean>('application.showVersionNumber') ? '' : 'not ' + 'return version specified in package.json', () => {

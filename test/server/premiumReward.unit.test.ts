@@ -7,7 +7,7 @@ import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { type Challenge } from '@juice-shop/data/types'
 import { challenges } from '../../data/datacache'
-import { servePremiumContent } from '../../routes2/premiumReward'
+import { servePremiumContent } from '../../routes/premiumReward'
 
 void describe('premiumReward', () => {
   let req: any

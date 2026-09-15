@@ -12,7 +12,7 @@ import fs from 'node:fs'
 import * as Prometheus from 'prom-client'
 import config from 'config'
 import { createTestApp } from './helpers/setup'
-import * as metricsRoute from '../../routes2/metrics'
+import * as metricsRoute from '../../routes/metrics'
 import { challenges } from '../../data/datacache'
 
 let app: Express

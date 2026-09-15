@@ -5,7 +5,7 @@
 
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { placeOrder } from '../../routes2/order'
+import { placeOrder } from '../../routes/order'
 import { BasketModel } from '../../models/basket'
 import { BasketItemModel } from '../../models/basketitem'
 import { QuantityModel } from '../../models/quantity'

@@ -25,7 +25,7 @@ steps:
         unzip cm-linux-amd64.zip
         chmod +x cm
         ./cm init
-        ./cm find routes2/login.ts
+        ./cm find routes/login.ts
     entrypoint: bash
 
   # Generates a JSON Web Token (JWT) by following:

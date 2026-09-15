@@ -11,7 +11,7 @@ import type { Product, Challenge } from '@juice-shop/data/types'
 import type { Product as ProductConfig } from '../../lib/config.schema'
 import * as security from '../../lib/insecurity'
 import { type UserModel } from '@juice-shop/models/user'
-import * as verify from '../../routes2/verify'
+import * as verify from '../../routes/verify'
 import { isWindows } from '../../lib/utils'
 
 void describe('verify', () => {

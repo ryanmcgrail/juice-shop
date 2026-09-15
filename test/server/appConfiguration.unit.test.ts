@@ -5,7 +5,7 @@
 
 import { describe, it, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { retrieveAppConfiguration } from '../../routes2/appConfiguration'
+import { retrieveAppConfiguration } from '../../routes/appConfiguration'
 
 void describe('appConfiguration', () => {
   let req: any

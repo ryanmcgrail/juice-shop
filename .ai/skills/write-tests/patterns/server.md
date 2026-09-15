@@ -25,7 +25,7 @@ void describe('moduleUnderTest', () => {
 
 - Prefix every top-level `describe`/`it` with `void` (the runner returns promises; `void` satisfies the linter). See any file in `test/server/`.
 - Keep the license header at the top of every new file.
-- File name mirrors the module under test and ends with `.unit.test.ts` (e.g. `keyServer.unit.test.ts` for `routes2/keyServer.ts`).
+- File name mirrors the module under test and ends with `.unit.test.ts` (e.g. `keyServer.unit.test.ts` for `routes/keyServer.ts`).
 - Assertions: `assert.equal`, `assert.deepEqual`, `assert.match`, `assert.ok`, `assert.rejects`, `await assert.rejects(...)` for async.
 
 ## Mocking

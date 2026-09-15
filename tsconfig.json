@@ -31,7 +31,7 @@
     "lib/**/*.ts",
     "lib/**/*.js",
     "models/**/*.ts",
-    "routes2/**/*.ts",
+    "routes/**/*.ts",
     "test/**/*.ts",
     "views/**/*.ts",
     "views/**/*.js",

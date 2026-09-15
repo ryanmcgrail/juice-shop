@@ -6,7 +6,7 @@
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { challenges } from '../../data/datacache'
-import { performRedirect } from '../../routes2/redirect'
+import { performRedirect } from '../../routes/redirect'
 import { type Challenge } from '@juice-shop/data/types'
 import { redirectAllowlist } from '../../lib/insecurity'
 

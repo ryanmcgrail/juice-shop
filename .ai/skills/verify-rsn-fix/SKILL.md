@@ -31,7 +31,7 @@ If it reports "Refactoring Safety Net check failed", you have broken the RSN for
 The `npm run rsn` output will list filenames like `challengeName_1_correct.ts` or `challengeName_2.ts`. These correspond to the snippet for `challengeName`.
 
 ### 2. Locate Source and Fix Files
-- **Source Snippet**: Find the `// vuln-code-snippet start challengeName` block in the project (usually in `server.ts`, `routes2/*.ts`, or `frontend/src/app/*.ts`).
+- **Source Snippet**: Find the `// vuln-code-snippet start challengeName` block in the project (usually in `server.ts`, `routes/*.ts`, or `frontend/src/app/*.ts`).
 - **Codefix Files**: Located in `data/static/codefixes/challengeName_*.ts`.
 
 ### 3. Apply Clean Fixes
